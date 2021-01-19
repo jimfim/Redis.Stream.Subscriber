@@ -73,4 +73,6 @@ jobs:
         # dotnet sonarscanner end /d:sonar.login="${{secrets.SONAR_TOKEN}}";
 
     - name: push
-      run: dotnet nuget push "**/*.nupkg" --source "https://nuget.pkg.github.com/jimfim/index.json"
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      run: dotnet nuget push "**/*.nupkg" --source "https://nuget.pkg.github.com/jimfim/index.json" --api-key ${{secrets.GITHUB_TOKEN}}
