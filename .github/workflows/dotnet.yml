@@ -62,7 +62,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       run: |
-        dotnet sonarscanner begin /v:"${{ steps.gitversion.outputs.semVer }}" /n:"EventNet" /o:"jimfim" /k:"jimfim_EventNet" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{secrets.SONAR_TOKEN}}";
+        dotnet sonarscanner begin /v:"${{ steps.gitversion.outputs.semVer }}" /n:"Redis.Stream.Subscriber" /o:"jimfim" /k:"jimfim_Redis.Stream.Subscriber" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{secrets.SONAR_TOKEN}}";
         dotnet build -p:version=${{ steps.gitversion.outputs.semVer }} --configuration Release --no-restore .;
         dotnet sonarscanner end /d:sonar.login="${{secrets.SONAR_TOKEN}}";
     - name: Setup .NET
