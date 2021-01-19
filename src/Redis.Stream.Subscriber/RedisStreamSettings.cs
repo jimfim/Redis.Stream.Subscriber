@@ -1,4 +1,4 @@
-namespace redis_tcp
+namespace Redis.Stream.Subscriber
 {
     public class RedisStreamSettings
     {

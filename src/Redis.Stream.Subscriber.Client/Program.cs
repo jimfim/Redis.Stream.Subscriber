@@ -2,7 +2,6 @@
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
-using redis_tcp;
 
 namespace Redis.Stream.Subscriber.Client
 {

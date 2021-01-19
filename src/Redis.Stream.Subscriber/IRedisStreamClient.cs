@@ -1,9 +1,8 @@
 using System;
-using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace redis_tcp
+namespace Redis.Stream.Subscriber
 {
     public interface IRedisStreamClient
     {

@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace redis_tcp
+namespace Redis.Stream.Subscriber
 {
     public class RedisRedisStreamClient : IRedisStreamClient
     {
