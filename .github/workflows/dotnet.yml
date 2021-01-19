@@ -53,7 +53,10 @@ jobs:
         echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.commitsSinceVersionSource }}"
         echo "CommitsSinceVersionSourcePadded: ${{ steps.gitversion.outputs.commitsSinceVersionSourcePadded }}"
         echo "CommitDate: ${{ steps.gitversion.outputs.commitDate }}"
-
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
     - name: Install dependencies
       run: |
         dotnet tool install --global dotnet-sonarscanner
@@ -65,13 +68,6 @@ jobs:
         dotnet sonarscanner begin /v:"${{ steps.gitversion.outputs.semVer }}" /n:"Redis.Stream.Subscriber"  /o:"jimfim" /k:"jimfim_Redis.Stream.Subscriber" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{secrets.SONAR_TOKEN}}";
         dotnet build -p:version=${{ steps.gitversion.outputs.semVer }} --configuration Release --no-restore .;
         dotnet sonarscanner end /d:sonar.login="${{secrets.SONAR_TOKEN}}";
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
+
     - name: push
       run: dotnet nuget push "**/*.nupkg" --source "https://nuget.pkg.github.com/jimfim/index.json"
