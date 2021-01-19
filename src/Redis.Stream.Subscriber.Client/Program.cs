@@ -10,7 +10,7 @@ namespace Redis.Stream.Subscriber.Client
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Waiting for events....");
             IRedisStreamClient client = new RedisRedisStreamClient();
             client.Subscribe(new RedisStreamSettings()
             {
@@ -18,14 +18,16 @@ namespace Redis.Stream.Subscriber.Client
                 Stream = "EventNet:Primary"
             },EventAppeared, new CancellationToken());
 
-            Console.WriteLine("Waiting for Events");
             Console.ReadLine();
         }
 
-        private static Task EventAppeared(ResolvedEvent arg)
+        private static async Task EventAppeared(ResolvedEvent arg)
         {
-            Console.WriteLine(arg.Data);
-            return Task.CompletedTask;
+
+            await Console.Out.WriteLineAsync($"=== {arg.Id} ==== ");
+            await Console.Out.WriteLineAsync(arg.Stream);
+            await Console.Out.WriteLineAsync(arg.FieldName);
+            await Console.Out.WriteLineAsync(arg.Data);
         }
     }
 }
