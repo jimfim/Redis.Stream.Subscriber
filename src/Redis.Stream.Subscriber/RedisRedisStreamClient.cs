@@ -13,11 +13,9 @@ namespace Redis.Stream.Subscriber
         {
             var host = settings.host;
             var port = settings.Port;
-            var index = 0;
-
+            var index = settings.StartingIndex;
             using var client = new TcpClient(host, port);
             var stream = client.GetStream();
-
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -44,7 +42,7 @@ namespace Redis.Stream.Subscriber
                 var parsedStreamData = streamDataBuffer.ToString().Split("\r\n");
                 try
                 {
-                    await eventAppeared.Invoke(new ResolvedEvent()
+                    await eventAppeared.Invoke(new ResolvedEvent
                     {
                         Id = parsedStreamData[7],
                         Stream = parsedStreamData[3],
@@ -52,7 +50,7 @@ namespace Redis.Stream.Subscriber
                         Data = parsedStreamData[12]
                     });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     await Console.Out.WriteLineAsync(ex.Message);
                 }
