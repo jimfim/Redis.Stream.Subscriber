@@ -8,18 +8,18 @@ namespace Redis.Stream.Subscriber
 {
     public class RedisRedisStreamClient : IRedisStreamClient
     {
+        private TcpClient client;
+        
         public async Task Subscribe(RedisStreamSettings settings, Func<ResolvedEvent, Task> eventAppeared,
             CancellationToken cancellationToken)
         {
-            var host = settings.host;
-            var port = settings.Port;
-            var index = settings.StartingIndex;
-            using var client = new TcpClient(host, port);
+            client = new TcpClient(settings.host, settings.Port);
             var stream = client.GetStream();
-
+            
+            var startingIndex = settings.StartingIndex;
             while (!cancellationToken.IsCancellationRequested)
             {
-                var message = ClientCommands.Subscribe(settings.Stream, settings.BatchSize, index);
+                var message = ClientCommands.Subscribe(settings.Stream, settings.BatchSize, startingIndex);
                 var bytes = Encoding.ASCII.GetBytes(message);
                 if (stream.CanWrite)
                 {
@@ -55,8 +55,14 @@ namespace Redis.Stream.Subscriber
                     await Console.Out.WriteLineAsync(ex.Message);
                 }
 
-                index += settings.BatchSize;
+                startingIndex += (uint)settings.BatchSize;
             }
+        }
+
+        public void Close()
+        {
+            client.Close();
+            client.Dispose();
         }
     }
 }

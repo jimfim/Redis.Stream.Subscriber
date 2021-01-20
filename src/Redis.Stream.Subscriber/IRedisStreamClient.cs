@@ -9,6 +9,8 @@ namespace Redis.Stream.Subscriber
         Task Subscribe(RedisStreamSettings settings, Func<ResolvedEvent, Task> eventAppeared,
                 CancellationToken cancellationToken);
 
+        void Close();
+
     }
 
     public class ResolvedEvent : EventArgs

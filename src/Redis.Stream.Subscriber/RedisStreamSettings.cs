@@ -10,6 +10,6 @@ namespace Redis.Stream.Subscriber
         public int BufferSize { get; set; } = 1024;
         public int BatchSize { get; set; } = 1;
 
-        public int StartingIndex { get; set; } = 0;
+        public uint StartingIndex { get; set; } = 0;
     }
 }

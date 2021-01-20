@@ -18,6 +18,7 @@ namespace Redis.Stream.Subscriber.Client
             },EventAppeared, new CancellationToken());
 
             Console.ReadLine();
+            client.Close();
         }
 
         private static async Task EventAppeared(ResolvedEvent arg)
