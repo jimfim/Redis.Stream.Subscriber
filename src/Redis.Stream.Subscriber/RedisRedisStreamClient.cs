@@ -8,22 +8,27 @@ namespace Redis.Stream.Subscriber
 {
     public class RedisRedisStreamClient : IRedisStreamClient
     {
-        private TcpClient client;
+        private readonly NetworkStream _streamClient;
+
+
+        public RedisRedisStreamClient(NetworkStream streamClient)
+        {
+            _streamClient = streamClient;
+        }
         
-        public async Task Subscribe(RedisStreamSettings settings, Func<ResolvedEvent, Task> eventAppeared,
+        public async Task ReadStreamEventsForwardAsync(string streamName, 
+            long lastCheckpoint,
+            SubscriptionSettings settings,
+            Func<ResolvedEvent, Task> eventAppeared,
             CancellationToken cancellationToken)
         {
-            client = new TcpClient(settings.host, settings.Port);
-            var stream = client.GetStream();
-            
-            var startingIndex = settings.StartingIndex;
             while (!cancellationToken.IsCancellationRequested)
             {
-                var message = ClientCommands.Subscribe(settings.Stream, settings.BatchSize, startingIndex);
+                var message = ClientCommands.Subscribe(streamName, settings.BatchSize, lastCheckpoint);
                 var bytes = Encoding.ASCII.GetBytes(message);
-                if (stream.CanWrite)
+                if (_streamClient.CanWrite)
                 {
-                    await stream.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
+                    await _streamClient.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
                 }
                 else
                 {
@@ -35,11 +40,12 @@ namespace Redis.Stream.Subscriber
                 do
                 {
                     var buffer = new byte[settings.BufferSize];
-                    await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                    await _streamClient.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                     streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
-                } while (stream.DataAvailable);
+                } while (_streamClient.DataAvailable);
 
                 var parsedStreamData = streamDataBuffer.ToString().Split("\r\n");
+                
                 try
                 {
                     await eventAppeared.Invoke(new ResolvedEvent
@@ -49,20 +55,25 @@ namespace Redis.Stream.Subscriber
                         FieldName = parsedStreamData[10],
                         Data = parsedStreamData[12]
                     });
+                    lastCheckpoint += 1;
                 }
                 catch (Exception ex)
                 {
                     await Console.Out.WriteLineAsync(ex.Message);
                 }
-
-                startingIndex += (uint)settings.BatchSize;
             }
+        }
+
+        public async Task ReadStreamEventsForwardAsync(string streamName, long lastCheckpoint, Func<ResolvedEvent, Task> eventAppeared,
+            CancellationToken cancellationToken)
+        {
+            await ReadStreamEventsForwardAsync(streamName, lastCheckpoint, new SubscriptionSettings(), eventAppeared, cancellationToken);
         }
 
         public void Close()
         {
-            client.Close();
-            client.Dispose();
+            _streamClient.Close();
+            _streamClient.Dispose();
         }
     }
 }

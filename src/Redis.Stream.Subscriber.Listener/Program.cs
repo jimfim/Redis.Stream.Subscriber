@@ -1,29 +1,30 @@
 ﻿using System;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Redis.Stream.Subscriber.Client
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.WriteLine("Waiting for events....");
-            IRedisStreamClient client = new RedisRedisStreamClient();
-            client.Subscribe(new RedisStreamSettings()
+            var cancellationToken = new CancellationToken();
+            var connection = new RedisConnection();
+
+            var connect = connection.Connect(new RedisStreamSettings
             {
                 host = "localhost",
-                Stream = "EventNet:Primary"
-            },EventAppeared, new CancellationToken());
-
+                Port = 6379
+            });
+            
+            connect.ReadStreamEventsForwardAsync("mystream", 0, EventAppeared, cancellationToken);
             Console.ReadLine();
-            client.Close();
+            connect.Close();
         }
 
         private static async Task EventAppeared(ResolvedEvent arg)
         {
-
             await Console.Out.WriteLineAsync($"=== {arg.Id} ==== ");
             await Console.Out.WriteLineAsync(arg.Stream);
             await Console.Out.WriteLineAsync(arg.FieldName);
