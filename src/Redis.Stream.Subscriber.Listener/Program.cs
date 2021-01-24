@@ -9,7 +9,6 @@ namespace Redis.Stream.Subscriber.Client
         private static async Task Main(string[] args)
         {
             Console.WriteLine("Waiting for events....");
-            var cancellationToken = new CancellationToken();
             var connection = new RedisConnection();
 
             var connect = connection.Connect(new RedisStreamSettings
@@ -17,13 +16,10 @@ namespace Redis.Stream.Subscriber.Client
                 host = "localhost",
                 Port = 6379
             });
-            
-            var entries = connect.ReadStreamAsync("mystream", 0,new SubscriptionSettings()
-            {
-                BatchSize = 2
-            }, cancellationToken);
 
-            await foreach (var entry in entries.WithCancellation(cancellationToken))
+            uint startingIndex = 0;
+            var entries = connect.ReadStreamAsync("mystream", startingIndex);
+            await foreach (var entry in entries)
             {
                 await ProcessEntry(entry);
             }
