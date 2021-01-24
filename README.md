@@ -1,7 +1,6 @@
 
 # Redis.Stream.Subscriber
 ## Description
-<img src="https://github.com/jimfim/Redis.Stream.Subscriber/raw/main/docs/icon.png" align="right" alt="Redis Stream Logo" width="200" height="200">
 The StackExchange.Redis client does not provide the functionality to subscribe a stream without constant polling. 
 
 https://github.com/StackExchange/StackExchange.Redis/issues/1155
