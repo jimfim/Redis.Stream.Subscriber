@@ -5,18 +5,25 @@ namespace Redis.Stream.Subscriber
 {
     public class RedisConnection : IRedisConnection
     {
-        private TcpClient client;
+        private ITcpClient _client;
         
         public IRedisStreamClient Connect(RedisStreamSettings settings)
         {
-            client = new TcpClient(settings.host, settings.Port);
-            var stream = client.GetStream();
+            _client = new TcpClientAdapter(new TcpClient(settings.host, settings.Port));
+            var stream = _client.GetStream();
+            return new RedisRedisStreamClient(stream);
+        }
+        
+        public IRedisStreamClient Connect(RedisStreamSettings settings, ITcpClient client)
+        {
+            _client = client;
+            var stream = _client.GetStream();
             return new RedisRedisStreamClient(stream);
         }
 
         public void Close()
         {
-            throw new NotImplementedException();
+            _client.Close();
         }
     }
 }
