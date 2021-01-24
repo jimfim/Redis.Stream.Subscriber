@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Redis.Stream.Subscriber
 {
@@ -16,15 +18,16 @@ namespace Redis.Stream.Subscriber
             _streamClient = streamClient;
         }
         
-        public async Task ReadStreamEventsForwardAsync(string streamName, 
-            long lastCheckpoint,
+        
+        public async IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, 
+            uint lastCheckpoint,
             SubscriptionSettings settings,
-            Func<ResolvedEvent, Task> eventAppeared,
-            CancellationToken cancellationToken)
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
+            var index = lastCheckpoint;
             while (!cancellationToken.IsCancellationRequested)
             {
-                var message = ClientCommands.Subscribe(streamName, settings.BatchSize, lastCheckpoint);
+                var message = ClientCommands.Subscribe(streamName, settings.BatchSize, index);
                 var bytes = Encoding.ASCII.GetBytes(message);
                 if (_streamClient.CanWrite)
                 {
@@ -45,29 +48,31 @@ namespace Redis.Stream.Subscriber
                 } while (_streamClient.DataAvailable);
 
                 var parsedStreamData = streamDataBuffer.ToString().Split("\r\n");
-                
-                try
+                uint count = 0;
+                for (var i = 0; i < settings.BatchSize; i++)
                 {
-                    await eventAppeared.Invoke(new ResolvedEvent
+                    var x = 8*i;
+                    var b = 6;
+                    var entry = new StreamEntry
                     {
-                        Id = parsedStreamData[7],
-                        Stream = parsedStreamData[3],
-                        FieldName = parsedStreamData[10],
-                        Data = parsedStreamData[12]
-                    });
-                    lastCheckpoint += 1;
+                        Id = parsedStreamData[b+x+1],
+                        FieldName = parsedStreamData[6+x+4],
+                        Data = parsedStreamData[6+x+6]
+                    };
+                    count++;
+                    yield return entry;
                 }
-                catch (Exception ex)
-                {
-                    await Console.Out.WriteLineAsync(ex.Message);
-                }
+
+                index += count;
             }
         }
-
-        public async Task ReadStreamEventsForwardAsync(string streamName, long lastCheckpoint, Func<ResolvedEvent, Task> eventAppeared,
-            CancellationToken cancellationToken)
+        
+        public async IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, uint lastCheckpoint, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            await ReadStreamEventsForwardAsync(streamName, lastCheckpoint, new SubscriptionSettings(), eventAppeared, cancellationToken);
+            await foreach (var streamEntry in ReadStreamAsync(streamName, lastCheckpoint, new SubscriptionSettings(), cancellationToken))
+            {
+                yield return streamEntry;
+            }
         }
 
         public void Close()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -6,15 +7,10 @@ namespace Redis.Stream.Subscriber
 {
     public interface IRedisStreamClient
     {
-        Task ReadStreamEventsForwardAsync(string streamName, long lastCheckpoint,
-            SubscriptionSettings settings,
-            Func<ResolvedEvent, Task> eventAppeared,
-            CancellationToken cancellationToken);
+        IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, uint lastCheckpoint, SubscriptionSettings settings, CancellationToken cancellationToken);
         
-        Task ReadStreamEventsForwardAsync(string streamName, long lastCheckpoint,
-            Func<ResolvedEvent, Task> eventAppeared,
-            CancellationToken cancellationToken);
-
+        IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, uint lastCheckpoint, CancellationToken cancellationToken);
+        
         void Close();
     }
 }

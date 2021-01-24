@@ -6,7 +6,7 @@ namespace Redis.Stream.Subscriber.Client
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             Console.WriteLine("Waiting for events....");
             var cancellationToken = new CancellationToken();
@@ -18,15 +18,23 @@ namespace Redis.Stream.Subscriber.Client
                 Port = 6379
             });
             
-            connect.ReadStreamEventsForwardAsync("mystream", 0, EventAppeared, cancellationToken);
+            var entries = connect.ReadStreamAsync("mystream", 0,new SubscriptionSettings()
+            {
+                BatchSize = 2
+            }, cancellationToken);
+
+            await foreach (var entry in entries.WithCancellation(cancellationToken))
+            {
+                await ProcessEntry(entry);
+            }
+            
             Console.ReadLine();
             connect.Close();
         }
 
-        private static async Task EventAppeared(ResolvedEvent arg)
+        private static async Task ProcessEntry(StreamEntry arg)
         {
             await Console.Out.WriteLineAsync($"=== {arg.Id} ==== ");
-            await Console.Out.WriteLineAsync(arg.Stream);
             await Console.Out.WriteLineAsync(arg.FieldName);
             await Console.Out.WriteLineAsync(arg.Data);
         }

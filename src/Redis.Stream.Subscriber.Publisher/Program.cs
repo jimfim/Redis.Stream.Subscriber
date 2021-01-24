@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using StackExchange.Redis;
 
 namespace Redis.Stream.Subscriber.Publisher
 {
-    class Program
+    static class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.WriteLine("connecting to redis");
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
+            ConnectionMultiplexer redis = await ConnectionMultiplexer.ConnectAsync("localhost");
             
             var db = redis.GetDatabase();
             var count = 1;
@@ -17,7 +19,7 @@ namespace Redis.Stream.Subscriber.Publisher
             while (true)
             {
                 Console.ReadLine();
-                db.StreamAdd(streamName, "foo_name", $"bar_{count}", $"{count}-0");
+                await db.StreamAddAsync(streamName, "foo_name", $"bar_{count}", $"{count}-0");
                 Console.Write($"message sent : {count}");
                 count++;
             }
