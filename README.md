@@ -1,12 +1,13 @@
-
 # Redis.Stream.Subscriber
 ## Description
 The StackExchange.Redis client does not provide the functionality to subscribe a stream without constant polling. 
 
 https://github.com/StackExchange/StackExchange.Redis/issues/1155
 
-The purpose of this library is to provide a more "EventStore" style blocking stream client for redis.
-Where possible/feasible we will attempt to keep this redis client as similar as possible to the latest EventStore client implementation
+The purpose of this library is to provide a more "EventStore" style blocking stream client for redis and where possible/feasible we will attempt to keep this redis client as similar as possible to the latest EventStore client implementation
+
+This project is concerned only with reading streams. It provides no functionality to write to redis at all. If you require this functionality we recommend using the **StackExchange.Redis** package
+
 ## Table of Contents
 * [Installation](#installation)
 * [Methodology](#methodology)
@@ -24,11 +25,11 @@ dotnet add PROJECT package Redis.Stream.Subscriber
 The primary purpose of this library is to avoid  polling redis for stream updates. 
 
 To achieve this we instead use a direct socket connection to the redis server using the dotnet TcpClient, we write the Stream commands directly to redis and then listen for data to be transmitted back on the same socket.
-The thread is blocked listening on the socket untill there is data consume, at which point it is read and serialized to a "StreamEntry" object and made available to you to process however you see fit 
+The thread is blocked listening on the socket until there is data consume, at which point it is read and serialized to a "StreamEntry" object and made available to you to process however you see fit. 
 
 ## Usage
 
-Initialize tcp connection with redis
+Initialize connection with redis
 ```c#
 var connect = connection.Connect(new RedisStreamSettings
 {
@@ -47,7 +48,7 @@ await foreach (var entry in entries)
 }
 ```
 
-### Examples
+### Demo
 
 ### Redis
 this repo contains a docker-compose file with a sample redis setup you can use to run the example clients in this solution
@@ -70,4 +71,7 @@ dotnet run --project ./src/Redis.Stream.Subscriber.Publisher/Redis.Stream.Subscr
 ```
 
 ## License
-TBD...
+MIT
+
+## Related Projects
+* [EventNet](https://github.com/jimfim/EventNet) - Library to manage an Aggregate lifecycle using Redis as an event store.
