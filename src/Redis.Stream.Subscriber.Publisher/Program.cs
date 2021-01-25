@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
@@ -15,10 +16,10 @@ namespace Redis.Stream.Subscriber.Publisher
             var db = redis.GetDatabase();
             int.TryParse(await db.StringGetAsync(checkpointKey), out var count);
             count++;
-            Console.WriteLine($"Press Enter to send data to the [{streamName}] stream....");
+            Console.WriteLine($"Send data to the [{streamName}] stream....");
+            
             while (true)
             {
-                Console.ReadLine();
                 var transaction = db.CreateTransaction();
                 
 #pragma warning disable 4014
@@ -29,6 +30,7 @@ namespace Redis.Stream.Subscriber.Publisher
                 await transaction.ExecuteAsync();
                 Console.Write($"message sent : {count}");
                 count++;
+                Thread.Sleep(2000);
             }
         }
     }

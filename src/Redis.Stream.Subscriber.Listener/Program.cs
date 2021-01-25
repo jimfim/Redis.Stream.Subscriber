@@ -30,8 +30,6 @@ namespace Redis.Stream.Subscriber.Client
 
         private static async Task ProcessEntry(StreamEntry arg)
         {
-            await Console.Out.WriteLineAsync($"=== {arg.Id} ==== ");
-            await Console.Out.WriteLineAsync(arg.FieldName);
             await Console.Out.WriteLineAsync(arg.Data);
         }
     }

@@ -2,13 +2,30 @@ version: "3.9"
 services:
   redis:
     image: redis:latest
+    hostname: redis
     ports:
       - 6379:6379
 
   redis-commander:
+    depends_on:
+      - redis
     image: rediscommander/redis-commander:latest
     restart: always
     environment:
       - REDIS_HOSTS=local:redis:6379
     ports:
       - "8081:8081"
+      
+  subscriber:
+    depends_on:
+      - redis
+    build:
+      context: .
+      dockerfile: src/Redis.Stream.Subscriber.Listener/Dockerfile
+  
+  publisher:
+    depends_on:
+      - subscriber
+    build:
+      context: .
+      dockerfile: src/Redis.Stream.Subscriber.Publisher/Dockerfile
