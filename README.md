@@ -69,10 +69,7 @@ await foreach (var entry in entries)
 - [.NET Core SDK 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 
 or
-**Docker**
-```bash 
-docker run -it -v .:/app/:z -w /app mcr.microsoft.com/dotnet/sdk:3.1 bash
-```
+- [Docker](https://docs.docker.com/desktop/)
 
 ### The very easy way
 this repo contains a docker-compose file that will build and run the sample applications along with a redis instance you can use to run the sample clients in this solution
