@@ -74,8 +74,8 @@ or
 docker run -it -v .:/app/:z -w /app mcr.microsoft.com/dotnet/sdk:3.1 bash
 ```
 
-### Redis
-this repo contains a docker-compose file with a sample redis setup you can use to run the example clients in this solution
+### The very easy way
+this repo contains a docker-compose file that will build and run the sample applications along with a redis instance you can use to run the sampel clients in this solution
 
 ```bash
 docker-compose up 
@@ -83,20 +83,26 @@ docker-compose up
 
 you can then connect to redis-commander to view your stream http://localhost:8081/
 
-### Running the Sample application
+### The (slightly less) easy way
+you will need a redis instance first before thes eapplication will run. you can set up your own
+or use the one from the docker-compose file in this repor
+```bash
+docker-compose up redis
+```
+
 Build the project, there are no external dependencies so this should be fast
 ```c#
 dotnet build Redis.Stream.Subscriber.sln
 ```
 
-Run the stream listener project that will subscribe to a stream
-```c#
-dotnet run --project src/Redis.Stream.Subscriber.Listener/Redis.Stream.Subscriber.Listener.csproj
-```
-
 the publisher application uses the StackExchange.Redis library to publish changes which the subscriber above project will listen
 ```c#
 dotnet run --project ./src/Redis.Stream.Subscriber.Publisher/Redis.Stream.Subscriber.Publisher.csproj
+```
+
+Run the stream listener project that will subscribe to a stream
+```c#
+dotnet run --project src/Redis.Stream.Subscriber.Listener/Redis.Stream.Subscriber.Listener.csproj
 ```
 
 ## License
