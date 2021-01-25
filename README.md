@@ -16,14 +16,21 @@ The purpose of this library is to provide a more "EventStore" style blocking str
 This project is concerned only with reading streams. It provides no functionality to write to redis at all. If you require this functionality we recommend using the **StackExchange.Redis** package
 
 ## Table of Contents
+* [Features](#features)
 * [Installation](#installation)
 * [Methodology](#methodology)
 * [Usage](#usage)
+* [Building](#building)
 * [License](#license)
+* [Related Projects](#related-projects)
+
+## Features
+- [X] Read stream forward
+- [ ] Read stream backwards
 
 ## Installation
 Install via nuget
-```
+```bash
 dotnet add PROJECT package Redis.Stream.Subscriber
 ```
 
@@ -38,6 +45,7 @@ The thread is blocked listening on the socket until there is data consume, at wh
 
 Initialize connection with redis
 ```c#
+var connection = new RedisConnection();
 var connect = connection.Connect(new RedisStreamSettings
 {
     host = "localhost",
@@ -55,24 +63,38 @@ await foreach (var entry in entries)
 }
 ```
 
-### Demo
+## Building
+### Windows / Linux / macOS
+**Prerequisites**
+- [.NET Core SDK 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+
+or
+**Docker**
+```bash 
+docker run -it -v .:/app/:z -w /app mcr.microsoft.com/dotnet/sdk:3.1 bash
+```
 
 ### Redis
 this repo contains a docker-compose file with a sample redis setup you can use to run the example clients in this solution
 
-`docker-compose up`
+```bash
+docker-compose up 
+```
 
 you can then connect to redis-commander to view your stream http://localhost:8081/
 
-### Listener and Publisher
+### Running the Sample application
+Build the project, there are no external dependencies so this should be fast
+```c#
+dotnet build Redis.Stream.Subscriber.sln
+```
 
-#### Listener
+Run the stream listener project that will subscribe to a stream
 ```c#
 dotnet run --project src/Redis.Stream.Subscriber.Listener/Redis.Stream.Subscriber.Listener.csproj
 ```
 
-#### Publisher
-this application used the StackExchange.Redis library to publish changes
+the publisher application uses the StackExchange.Redis library to publish changes which the subscriber above project will listen
 ```c#
 dotnet run --project ./src/Redis.Stream.Subscriber.Publisher/Redis.Stream.Subscriber.Publisher.csproj
 ```

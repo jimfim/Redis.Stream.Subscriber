@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Stream.Subscriber.Pub
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{56D92B79-75B4-4576-AE17-6734FB08F961}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Stream.Subscriber.Tests", "Redis.Stream.Subscriber.Tests\Redis.Stream.Subscriber.Tests.csproj", "{5FF537A2-28CF-4CDA-93EB-B407507EE4E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Stream.Subscriber.Tests", "tests\Redis.Stream.Subscriber.Tests\Redis.Stream.Subscriber.Tests.csproj", "{5FF537A2-28CF-4CDA-93EB-B407507EE4E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

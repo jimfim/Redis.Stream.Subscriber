@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\Redis.Stream.Subscriber\Redis.Stream.Subscriber.csproj" />
+      <ProjectReference Include="..\..\src\Redis.Stream.Subscriber\Redis.Stream.Subscriber.csproj" />
     </ItemGroup>
 
 </Project>
