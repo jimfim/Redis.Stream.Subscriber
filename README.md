@@ -83,3 +83,16 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Related Projects
 * [EventNet](https://github.com/jimfim/EventNet) - Library to manage an Aggregate lifecycle using Redis as an event store.
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[contributors-url]: https://github.com/jimfim/Redis.Stream.Subscriber/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[forks-url]: https://github.com/jimfim/Redis.Stream.Subscriber/network/members
+[stars-shield]: https://img.shields.io/github/stars/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[stars-url]: https://github.com/jimfim/Redis.Stream.Subscriber/stargazers
+[issues-shield]: https://img.shields.io/github/issues/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[issues-url]: https://github.com/jimfim/Redis.Stream.Subscriber/issues
+[license-shield]: https://img.shields.io/github/license/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[license-url]: https://github.com/jimfim/Redis.Stream.Subscriber/blob/master/LICENSE.txt
