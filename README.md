@@ -75,7 +75,7 @@ docker run -it -v .:/app/:z -w /app mcr.microsoft.com/dotnet/sdk:3.1 bash
 ```
 
 ### The very easy way
-this repo contains a docker-compose file that will build and run the sample applications along with a redis instance you can use to run the sampel clients in this solution
+this repo contains a docker-compose file that will build and run the sample applications along with a redis instance you can use to run the sample clients in this solution
 
 ```bash
 docker-compose up 
@@ -84,8 +84,8 @@ docker-compose up
 you can then connect to redis-commander to view your stream http://localhost:8081/
 
 ### The (slightly less) easy way
-you will need a redis instance first before thes eapplication will run. you can set up your own
-or use the one from the docker-compose file in this repor
+you will need a redis instance first before this application will run. you can set up your own
+or use the one from the docker-compose file in this repository
 ```bash
 docker-compose up redis
 ```
