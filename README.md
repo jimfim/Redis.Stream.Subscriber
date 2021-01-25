@@ -95,7 +95,7 @@ Build the project, there are no external dependencies so this should be fast
 dotnet build Redis.Stream.Subscriber.sln
 ```
 
-the publisher application uses the StackExchange.Redis library to publish changes which the subscriber above project will listen
+the publisher application uses the StackExchange.Redis library to publish changes which the listener project below will listen
 ```c#
 dotnet run --project ./src/Redis.Stream.Subscriber.Publisher/Redis.Stream.Subscriber.Publisher.csproj
 ```
