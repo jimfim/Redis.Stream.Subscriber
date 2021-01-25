@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
@@ -21,8 +20,12 @@ namespace Redis.Stream.Subscriber.Publisher
             {
                 Console.ReadLine();
                 var transaction = db.CreateTransaction();
+                
+#pragma warning disable 4014
                 transaction.StreamAddAsync(streamName, "foo_name", $"bar_{count}", $"{count}-0");
                 transaction.StringIncrementAsync(checkpointKey);
+#pragma warning restore 4014                
+                
                 await transaction.ExecuteAsync();
                 Console.Write($"message sent : {count}");
                 count++;

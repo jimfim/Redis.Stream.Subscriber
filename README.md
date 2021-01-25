@@ -1,4 +1,10 @@
 # Redis.Stream.Subscriber
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+
 ## Description
 The StackExchange.Redis client does not provide the functionality to subscribe a stream without constant polling. 
 
@@ -71,7 +77,9 @@ dotnet run --project ./src/Redis.Stream.Subscriber.Publisher/Redis.Stream.Subscr
 ```
 
 ## License
-MIT
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
 
 ## Related Projects
 * [EventNet](https://github.com/jimfim/EventNet) - Library to manage an Aggregate lifecycle using Redis as an event store.
