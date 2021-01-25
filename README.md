@@ -108,7 +108,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 
 ## Related Projects
-* [EventNet](https://github.com/jimfim/EventNet) - Library to manage an Aggregate lifecycle using Redis as an event store.
+* [EventNet](https://github.com/jimfim/EventNet) (**mine**)- Library to manage an Aggregate lifecycle using Redis as an event store.
+* [Awesome EventSourcing](https://github.com/leandrocp/awesome-cqrs-event-sourcing) - More EventSourcing goodness
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->

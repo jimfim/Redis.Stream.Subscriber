@@ -28,7 +28,7 @@ namespace Redis.Stream.Subscriber.Publisher
 #pragma warning restore 4014                
                 
                 await transaction.ExecuteAsync();
-                Console.Write($"message sent : {count}");
+                Console.WriteLine($"message sent : {count}");
                 count++;
                 Thread.Sleep(2000);
             }

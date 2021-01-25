@@ -30,7 +30,7 @@ namespace Redis.Stream.Subscriber.Client
 
         private static async Task ProcessEntry(StreamEntry arg)
         {
-            await Console.Out.WriteLineAsync(arg.Data);
+            await Console.Out.WriteLineAsync($"message received : {arg.Data}");
         }
     }
 }
