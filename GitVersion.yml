@@ -1,5 +1,7 @@
-mode: ContinuousDeployment
-branches: {}
+mode: ContinuousDelivery
+branches:
+  master:
+    regex: ^master$|^main$
 ignore:
   sha: []
 merge-message-formats: {}
