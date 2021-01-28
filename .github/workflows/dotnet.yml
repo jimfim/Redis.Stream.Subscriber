@@ -19,10 +19,10 @@ jobs:
       uses: gittools/actions/gitversion/setup@v0.9.7
       with:
         versionSpec: '5.x'
-        
     - name: Use GitVersion
       id: gitversion # step id used as reference for output values
       uses: gittools/actions/gitversion/execute@v0.9.7
+      
     - run: |
         echo "Major: ${{ steps.gitversion.outputs.major }}"
         echo "Minor: ${{ steps.gitversion.outputs.minor }}"
@@ -72,8 +72,19 @@ jobs:
         # dotnet sonarscanner begin /v:"${{ steps.gitversion.outputs.semVer }}" /n:"Redis.Stream.Subscriber"  /o:"jimfim" /k:"jimfim_Redis.Stream.Subscriber" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{secrets.SONAR_TOKEN}}";
         dotnet build -p:version=${{ steps.gitversion.outputs.semVer }} --configuration Release --no-restore .;
         # dotnet sonarscanner end /d:sonar.login="${{secrets.SONAR_TOKEN}}";
-
+        
     - name: push
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       run: dotnet nuget push "**/*.nupkg" --source "https://nuget.pkg.github.com/jimfim/index.json" --api-key ${{secrets.GITHUB_TOKEN}}
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: true
+        prerelease: true
