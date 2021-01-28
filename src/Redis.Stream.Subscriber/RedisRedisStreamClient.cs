@@ -27,7 +27,7 @@ namespace Redis.Stream.Subscriber
             var index = lastCheckpoint;
             while (!cancellationToken.IsCancellationRequested)
             {
-                var message = ClientCommands.Subscribe(streamName, settings.BatchSize, index);
+                var message = CommandConstants.Subscribe(streamName, settings.BatchSize, index);
                 var bytes = Encoding.ASCII.GetBytes(message);
                 if (_streamClient.CanWrite)
                 {
@@ -47,23 +47,11 @@ namespace Redis.Stream.Subscriber
                     streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
                 } while (_streamClient.DataAvailable);
 
-                var parsedStreamData = streamDataBuffer.ToString().Split("\r\n");
-                uint count = 0;
-                for (var i = 0; i < settings.BatchSize; i++)
+                foreach (var streamEntry in StreamParser.Parse(streamDataBuffer))
                 {
-                    var x = 8*i;
-                    var b = 6;
-                    var entry = new StreamEntry
-                    {
-                        Id = parsedStreamData[b+x+1],
-                        FieldName = parsedStreamData[6+x+4],
-                        Data = parsedStreamData[6+x+6]
-                    };
-                    count++;
-                    yield return entry;
+                    yield return streamEntry;
+                    index++;
                 }
-
-                index += count;
             }
         }
         
@@ -80,5 +68,12 @@ namespace Redis.Stream.Subscriber
             _streamClient.Close();
             _streamClient.Dispose();
         }
+    }
+
+    public class StreamEntry
+    {
+        public string FieldName { get; set; }
+        public string Id { get; set; }
+        public string Data { get; set; }
     }
 }
