@@ -1,29 +1,37 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Redis.Stream.Subscriber
 {
     public class RedisRedisStreamClient : IRedisStreamClient
     {
-        private TcpClient client;
-        
-        public async Task Subscribe(RedisStreamSettings settings, Func<ResolvedEvent, Task> eventAppeared,
-            CancellationToken cancellationToken)
+        private readonly NetworkStream _streamClient;
+
+
+        public RedisRedisStreamClient(NetworkStream streamClient)
         {
-            client = new TcpClient(settings.host, settings.Port);
-            var stream = client.GetStream();
-            
-            var startingIndex = settings.StartingIndex;
+            _streamClient = streamClient;
+        }
+        
+        
+        public async IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, 
+            uint lastCheckpoint,
+            SubscriptionSettings settings,
+            [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            var index = lastCheckpoint;
             while (!cancellationToken.IsCancellationRequested)
             {
-                var message = ClientCommands.Subscribe(settings.Stream, settings.BatchSize, startingIndex);
+                var message = CommandConstants.Subscribe(streamName, settings.BatchSize, index);
                 var bytes = Encoding.ASCII.GetBytes(message);
-                if (stream.CanWrite)
+                if (_streamClient.CanWrite)
                 {
-                    await stream.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
+                    await _streamClient.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
                 }
                 else
                 {
@@ -35,34 +43,37 @@ namespace Redis.Stream.Subscriber
                 do
                 {
                     var buffer = new byte[settings.BufferSize];
-                    await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                    await _streamClient.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                     streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
-                } while (stream.DataAvailable);
+                } while (_streamClient.DataAvailable);
 
-                var parsedStreamData = streamDataBuffer.ToString().Split("\r\n");
-                try
+                foreach (var streamEntry in StreamParser.Parse(streamDataBuffer))
                 {
-                    await eventAppeared.Invoke(new ResolvedEvent
-                    {
-                        Id = parsedStreamData[7],
-                        Stream = parsedStreamData[3],
-                        FieldName = parsedStreamData[10],
-                        Data = parsedStreamData[12]
-                    });
+                    yield return streamEntry;
+                    index++;
                 }
-                catch (Exception ex)
-                {
-                    await Console.Out.WriteLineAsync(ex.Message);
-                }
-
-                startingIndex += (uint)settings.BatchSize;
+            }
+        }
+        
+        public async IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, uint lastCheckpoint, [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            await foreach (var streamEntry in ReadStreamAsync(streamName, lastCheckpoint, new SubscriptionSettings(), cancellationToken))
+            {
+                yield return streamEntry;
             }
         }
 
         public void Close()
         {
-            client.Close();
-            client.Dispose();
+            _streamClient.Close();
+            _streamClient.Dispose();
         }
+    }
+
+    public class StreamEntry
+    {
+        public string FieldName { get; set; }
+        public string Id { get; set; }
+        public string Data { get; set; }
     }
 }

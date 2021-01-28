@@ -2,7 +2,24 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Stream.Subscriber", "src\Redis.Stream.Subscriber\Redis.Stream.Subscriber.csproj", "{730E8921-9B0B-4DBF-9DC8-CA38E9C787DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Stream.Subscriber.Client", "src\Redis.Stream.Subscriber.Client\Redis.Stream.Subscriber.Client.csproj", "{E9415ABA-DFE3-49AF-A531-D8A044C19B53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Stream.Subscriber.Listener", "src\Redis.Stream.Subscriber.Listener\Redis.Stream.Subscriber.Listener.csproj", "{E9415ABA-DFE3-49AF-A531-D8A044C19B53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9733C8C7-9A0A-4884-B377-3B11758228AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{60717DC2-05F4-4327-97F9-F77EF753EAB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{4F423F57-0FC4-4893-9F37-D72FEC47BCBF}"
+ProjectSection(SolutionItems) = preProject
+	GitVersion.yml = GitVersion.yml
+	README.md = README.md
+	docker-compose.yaml = docker-compose.yaml
+EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Stream.Subscriber.Publisher", "src\Redis.Stream.Subscriber.Publisher\Redis.Stream.Subscriber.Publisher.csproj", "{9799B6EB-4687-4468-BCB5-A1E25AA0374C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{56D92B79-75B4-4576-AE17-6734FB08F961}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Stream.Subscriber.Tests", "tests\Redis.Stream.Subscriber.Tests\Redis.Stream.Subscriber.Tests.csproj", "{5FF537A2-28CF-4CDA-93EB-B407507EE4E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +35,19 @@ Global
 		{E9415ABA-DFE3-49AF-A531-D8A044C19B53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9415ABA-DFE3-49AF-A531-D8A044C19B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9415ABA-DFE3-49AF-A531-D8A044C19B53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9799B6EB-4687-4468-BCB5-A1E25AA0374C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9799B6EB-4687-4468-BCB5-A1E25AA0374C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9799B6EB-4687-4468-BCB5-A1E25AA0374C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9799B6EB-4687-4468-BCB5-A1E25AA0374C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FF537A2-28CF-4CDA-93EB-B407507EE4E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FF537A2-28CF-4CDA-93EB-B407507EE4E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FF537A2-28CF-4CDA-93EB-B407507EE4E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FF537A2-28CF-4CDA-93EB-B407507EE4E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{730E8921-9B0B-4DBF-9DC8-CA38E9C787DD} = {9733C8C7-9A0A-4884-B377-3B11758228AC}
+		{E9415ABA-DFE3-49AF-A531-D8A044C19B53} = {60717DC2-05F4-4327-97F9-F77EF753EAB9}
+		{9799B6EB-4687-4468-BCB5-A1E25AA0374C} = {60717DC2-05F4-4327-97F9-F77EF753EAB9}
+		{5FF537A2-28CF-4CDA-93EB-B407507EE4E0} = {56D92B79-75B4-4576-AE17-6734FB08F961}
 	EndGlobalSection
 EndGlobal
