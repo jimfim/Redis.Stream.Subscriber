@@ -1,24 +1,24 @@
-using NUnit.Framework;
+using Xunit;
 
 namespace Redis.Stream.Subscriber.Tests
 {
     public class ConnectionTests
     {
-        [SetUp]
-        public void Setup()
+        [Fact]
+        public void Connect_ReturnsStreamClient_WhenInitialized()
         {
-        }
+            // Arrange
+            var connection = new RedisConnection();
 
-        [Test]
-        public void CanCreateRedisConnection()
-        {
-            IRedisConnection connection = new RedisConnection();
-            var connect = connection.Connect(new RedisStreamSettings
+            // Act
+            var streamClient = connection.Connect(new RedisStreamSettings
             {
                 Host = "localhost",
                 Port = 6379
             });
-            Assert.IsNotNull(connect);
+
+            // Assert
+            Assert.NotNull(streamClient);
         }
     }
 }
