@@ -1,0 +1,26 @@
+# Top-level editorconfig for Redis.Stream.Subscriber
+is_gitignored = true
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+dotnet_sort_system_directives_first = true
+indent_style = space
+indent_size = 4
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_catch = false
+csharp_new_line_before_else = false
+csharp_new_line_before_finally = false
+csharp_new_line_between_query_expression_clauses = true
+csharp_indent_case_contents = true
+csharp_indent_switch_cases = true
+csharp_space_after_keywords_in_control_flow_statements = true
+
+[*.{csproj,sln,json,yaml,yml}]
+indent_size = 2
