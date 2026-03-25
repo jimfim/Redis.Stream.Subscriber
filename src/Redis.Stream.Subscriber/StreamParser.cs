@@ -9,27 +9,25 @@ namespace Redis.Stream.Subscriber
         public static IEnumerable<StreamEntry> Parse(StringBuilder stringBuilder)
         {
             int headerSize = 6;
-            int dataSize = 8;
-            var parsedStreamData = stringBuilder.ToString().Split(CommandConstants.StreamEnd);
-            var x = parsedStreamData.Length - headerSize;
-            if (x < 0)
+            int dataEntrySize = 8;
+            var parsedData = stringBuilder.ToString().Split(CommandConstants.StreamEnd);
+
+            if (parsedData.Length < headerSize || string.IsNullOrEmpty(stringBuilder.ToString()))
             {
-                yield return new StreamEntry();
+                yield break;
             }
-            else
+
+            var entriesArray = new ArraySegment<string>(parsedData, headerSize, parsedData.Length - headerSize).ToArray();
+            int entryCount = entriesArray.Length / dataEntrySize;
+
+            for (int i = 0; i < entryCount; i++)
             {
-                var myArrSegMid = new ArraySegment<string>( parsedStreamData,headerSize,parsedStreamData.Length - headerSize).ToArray();
-                var dataSegments = myArrSegMid.Length / 8;
-                for (int i = 0; i < dataSegments; i++)
+                yield return new StreamEntry
                 {
-                    var entry = new StreamEntry
-                    {
-                        Id = myArrSegMid[(i*dataSize)+1],
-                        FieldName = myArrSegMid[(i*dataSize)+4],
-                        Data = myArrSegMid[(i*dataSize)+6]
-                    };
-                    yield return entry;
-                }
+                    Id = entriesArray[(i * dataEntrySize) + 1],
+                    FieldName = entriesArray[(i * dataEntrySize) + 4],
+                    Data = entriesArray[(i * dataEntrySize) + 6]
+                };
             }
         }
     }

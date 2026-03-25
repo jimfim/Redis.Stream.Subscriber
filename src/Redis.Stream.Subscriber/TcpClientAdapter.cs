@@ -2,10 +2,10 @@ using System.Net.Sockets;
 
 namespace Redis.Stream.Subscriber
 {
-    public class TcpClientAdapter: ITcpClient
+    public class TcpClientAdapter : ITcpClient
     {
         private readonly TcpClient _wrappedClient;
-        
+
         public TcpClientAdapter(TcpClient client)
         {
             _wrappedClient = client;

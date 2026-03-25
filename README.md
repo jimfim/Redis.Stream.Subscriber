@@ -25,8 +25,8 @@ This project is concerned only with reading streams. It provides no functionalit
 * [Related Projects](#related-projects)
 
 ## Features
-- [X] Read stream forward
-- [ ] Read stream backwards
+- [X] Read stream forward (XREAD)
+- [X] Read stream backwards (XREVRANGE)
 
 ## Installation
 Install via nuget

@@ -17,9 +17,9 @@ namespace Redis.Stream.Subscriber
         {
             _streamClient = streamClient;
         }
-        
-        
-        public async IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, 
+
+
+        public async IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName,
             uint lastCheckpoint,
             SubscriptionSettings settings,
             [EnumeratorCancellation] CancellationToken cancellationToken)
@@ -54,10 +54,37 @@ namespace Redis.Stream.Subscriber
                 }
             }
         }
-        
+
         public async IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, uint lastCheckpoint, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await foreach (var streamEntry in ReadStreamAsync(streamName, lastCheckpoint, new SubscriptionSettings(), cancellationToken))
+            {
+                yield return streamEntry;
+            }
+        }
+
+        public async IAsyncEnumerable<StreamEntry> ReadStreamBackwardsAsync(string streamName, string fromId = "-", int batchSize = 100, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            var message = CommandConstants.ReadRangeBackwards(streamName, batchSize, fromId);
+            var bytes = Encoding.ASCII.GetBytes(message);
+
+            if (_streamClient.CanWrite)
+            {
+                await _streamClient.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
+            }
+
+            var streamDataBuffer = new StringBuilder();
+            while (_streamClient.DataAvailable && !cancellationToken.IsCancellationRequested)
+            {
+                var buffer = new byte[8192];
+                var bytesRead = await _streamClient.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                if (bytesRead > 0)
+                {
+                    streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
+                }
+            }
+
+            foreach (var streamEntry in StreamParser.Parse(streamDataBuffer))
             {
                 yield return streamEntry;
             }

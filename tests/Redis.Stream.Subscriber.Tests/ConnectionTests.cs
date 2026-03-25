@@ -15,7 +15,7 @@ namespace Redis.Stream.Subscriber.Tests
             IRedisConnection connection = new RedisConnection();
             var connect = connection.Connect(new RedisStreamSettings
             {
-                host = "localhost",
+                Host = "localhost",
                 Port = 6379
             });
             Assert.IsNotNull(connect);
