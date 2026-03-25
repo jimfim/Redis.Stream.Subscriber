@@ -6,5 +6,17 @@
     <WarningsAsErrors>true</WarningsAsErrors>
     <RepositoryUrl>https://github.com/jimfim/Redis.Stream.Subscriber</RepositoryUrl>
     <TargetFramework>netstandard2.1</TargetFramework>
+    
+    <!-- Enable nullable reference types -->
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <!-- Add Roslyn Analyzers -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>
