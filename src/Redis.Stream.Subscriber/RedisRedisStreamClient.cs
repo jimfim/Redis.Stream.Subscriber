@@ -5,17 +5,23 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Redis.Stream.Subscriber
 {
     public class RedisRedisStreamClient : IRedisStreamClient
     {
         private readonly NetworkStream _streamClient;
+        private readonly ILogger<RedisRedisStreamClient>? _logger;
 
 
-        public RedisRedisStreamClient(NetworkStream streamClient)
+        /// <summary>
+        /// Creates a new instance with optional logging.
+        /// </summary>
+        public RedisRedisStreamClient(NetworkStream streamClient, ILogger<RedisRedisStreamClient>? logger = null)
         {
-            _streamClient = streamClient;
+            _streamClient = streamClient ?? throw new ArgumentNullException(nameof(streamClient));
+            _logger = logger;
         }
 
 
@@ -24,33 +30,56 @@ namespace Redis.Stream.Subscriber
             SubscriptionSettings settings,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(streamName))
+            {
+                throw new ArgumentException("Stream name cannot be null or empty", nameof(streamName));
+            }
+
+            settings.Validate();
+            
             var index = lastCheckpoint;
             while (!cancellationToken.IsCancellationRequested)
             {
-                var message = CommandConstants.Subscribe(streamName, settings.BatchSize, index);
-                var bytes = Encoding.ASCII.GetBytes(message);
-                if (_streamClient.CanWrite)
+                try
                 {
-                    await _streamClient.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
-                }
-                else
-                {
-                    await Console.Out.WriteLineAsync("Can't write");
-                    continue;
-                }
+                    var message = CommandConstants.Subscribe(streamName, settings.BatchSize, index);
+                    var bytes = Encoding.ASCII.GetBytes(message);
+                    
+                    _logger?.LogDebug("Sending XREAD command");
 
-                var streamDataBuffer = new StringBuilder();
-                do
-                {
-                    var buffer = new byte[settings.BufferSize];
-                    await _streamClient.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-                    streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
-                } while (_streamClient.DataAvailable);
+                    if (_streamClient.CanWrite)
+                    {
+                        await _streamClient.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
+                    }
+                    else
+                    {
+                        _logger?.LogWarning("Stream not writable, retrying...");
+                        continue;
+                    }
 
-                foreach (var streamEntry in StreamParser.Parse(streamDataBuffer))
+                    var streamDataBuffer = new StringBuilder();
+                    do
+                    {
+                        var buffer = new byte[settings.BufferSize];
+                        await _streamClient.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                        streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+                    } while (_streamClient.DataAvailable);
+
+                    foreach (var streamEntry in StreamParser.Parse(streamDataBuffer))
+                    {
+                        yield return streamEntry;
+                        index++;
+                    }
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
-                    yield return streamEntry;
-                    index++;
+                    _logger?.LogDebug("Stream reading cancelled");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex, "Error reading from stream: {ErrorMessage}", ex.Message);
+                    throw;
                 }
             }
         }
@@ -65,8 +94,15 @@ namespace Redis.Stream.Subscriber
 
         public async IAsyncEnumerable<StreamEntry> ReadStreamBackwardsAsync(string streamName, string fromId = "-", int batchSize = 100, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrWhiteSpace(streamName))
+            {
+                throw new ArgumentException("Stream name cannot be null or empty", nameof(streamName));
+            }
+
             var message = CommandConstants.ReadRangeBackwards(streamName, batchSize, fromId);
             var bytes = Encoding.ASCII.GetBytes(message);
+
+            _logger?.LogDebug("Sending XREVRANGE command");
 
             if (_streamClient.CanWrite)
             {
@@ -94,13 +130,28 @@ namespace Redis.Stream.Subscriber
         {
             _streamClient.Close();
             _streamClient.Dispose();
+            _logger?.LogDebug("Stream client closed");
         }
     }
 
+    /// <summary>
+    /// Represents a single entry in a Redis stream.
+    /// </summary>
     public class StreamEntry
     {
-        public string FieldName { get; set; }
-        public string Id { get; set; }
-        public string Data { get; set; }
+        /// <summary>
+        /// The unique ID of this entry.
+        /// </summary>
+        public string Id { get; set; } = null!;
+
+        /// <summary>
+        /// The field name associated with the data.
+        /// </summary>
+        public string FieldName { get; set; } = null!;
+
+        /// <summary>
+        /// The actual data payload of this entry.
+        /// </summary>
+        public string Data { get; set; } = null!;
     }
 }

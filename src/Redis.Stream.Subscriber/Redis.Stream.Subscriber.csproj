@@ -19,4 +19,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <!-- Add logging abstractions -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
 </Project>
