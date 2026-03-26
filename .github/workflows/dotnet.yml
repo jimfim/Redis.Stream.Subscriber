@@ -27,8 +27,16 @@ jobs:
     - name: Test
       run: dotnet test Redis.Stream.Subscriber.sln --configuration Release --no-build --verbosity normal
 
-    - name: Install .NET Audit tool
-      run: dotnet tool install -g dotnet-audit
+    - name: Restore packages with vulnerability check
+      run: |
+        dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
+        dotnet restore Redis.Stream.Subscriber.sln
 
-    - name: Audit for vulnerabilities
-      run: dotnet-audit --severity High,Critical --output-format markdown
+    - name: Check for vulnerabilities using NuGet audit
+      run: |
+        OUTPUT=$(dotnet list package --vulnerable 2>&1)
+        echo "$OUTPUT"
+        if echo "$OUTPUT" | grep -q "has a known"; then
+          echo "Vulnerabilities found!"
+          exit 1
+        fi
