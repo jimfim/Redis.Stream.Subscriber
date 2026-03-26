@@ -20,7 +20,7 @@ namespace Redis.Stream.Subscriber
         {
             if (string.IsNullOrWhiteSpace(responseData))
             {
-                return Array.Empty<StreamEntry>();
+                yield break;
             }
 
             var parsedData = responseData.Split(CommandConstants.StreamEnd, StringSplitOptions.RemoveEmptyEntries);

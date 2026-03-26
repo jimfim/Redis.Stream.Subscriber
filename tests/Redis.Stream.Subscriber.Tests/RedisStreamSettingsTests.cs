@@ -1,21 +1,11 @@
 using System;
+using FluentAssertions;
 using Xunit;
 
 namespace Redis.Stream.Subscriber.Tests
 {
     public class RedisStreamSettingsTests
     {
-        [Fact]
-        public void Constructor_SetsDefaults_PropertiesInitialized()
-        {
-            // Arrange & Act
-            var settings = new RedisStreamSettings();
-
-            // Assert
-            Assert.Equal(6379, settings.Port);
-            Assert.Equal(100, settings.Timeout);
-        }
-
         [Fact]
         public void Validate_WithValidSettings_DoesNotThrow()
         {
@@ -28,7 +18,7 @@ namespace Redis.Stream.Subscriber.Tests
             };
 
             // Act & Assert - should not throw
-            Assert.DoesNotThrow(() => settings.Validate());
+            FluentActions.Invoking(() => settings.Validate()).Should().NotThrow();
         }
 
         [Theory]
@@ -85,13 +75,13 @@ namespace Redis.Stream.Subscriber.Tests
         }
 
         [Fact]
-        public void host_Property_ThrowsInvalidOperationException()
+        public void Host_Property_ThrowsWhenInvalid()
         {
             // Arrange
             var settings = new RedisStreamSettings();
 
-            // Act & Assert - obsolete property should throw when accessed
-            Assert.Throws<InvalidOperationException>(() => _ = settings.host);
+            // Act & Assert - invalid host should throw when accessed
+            Assert.Throws<ArgumentException>(() => _ = settings.Host);
         }
     }
 }

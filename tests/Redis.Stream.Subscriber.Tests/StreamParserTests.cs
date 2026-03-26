@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Redis.Stream.Subscriber.Tests
@@ -9,7 +10,7 @@ namespace Redis.Stream.Subscriber.Tests
         public void Parse_NullString_ReturnsEmptyEnumerable()
         {
             // Act
-            var result = StreamParser.Parse(null!);
+            var result = StreamParser.Parse((string?)null!);
 
             // Assert
             Assert.Empty(result);

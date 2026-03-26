@@ -1,4 +1,5 @@
 using System;
+using FluentAssertions;
 using Xunit;
 
 namespace Redis.Stream.Subscriber.Tests
@@ -12,8 +13,8 @@ namespace Redis.Stream.Subscriber.Tests
             var settings = new SubscriptionSettings();
 
             // Assert
-            Assert.Equal(1024, settings.BufferSize);
-            Assert.Equal(1, settings.BatchSize);
+            settings.BufferSize.Should().Be(1024);
+            settings.BatchSize.Should().Be(1);
         }
 
         [Fact]
@@ -23,7 +24,7 @@ namespace Redis.Stream.Subscriber.Tests
             var settings = new SubscriptionSettings();
 
             // Act & Assert - should not throw
-            Assert.DoesNotThrow(() => settings.Validate());
+            FluentActions.Invoking(() => settings.Validate()).Should().NotThrow();
         }
 
         [Theory]

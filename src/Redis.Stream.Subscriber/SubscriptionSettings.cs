@@ -1,3 +1,5 @@
+using System;
+
 namespace Redis.Stream.Subscriber
 {
     /// <summary>
@@ -18,7 +20,7 @@ namespace Redis.Stream.Subscriber
             {
                 if (value <= 0)
                 {
-                    throw new ArgumentException("BufferSize must be greater than zero", nameof(value));
+                    throw new ArgumentException("BufferSize must be greater than zero", nameof(BufferSize));
                 }
                 _bufferSize = value;
             }
@@ -34,7 +36,7 @@ namespace Redis.Stream.Subscriber
             {
                 if (value <= 0)
                 {
-                    throw new ArgumentException("BatchSize must be greater than zero", nameof(value));
+                    throw new ArgumentException("BatchSize must be greater than zero", nameof(BatchSize));
                 }
                 _batchSize = value;
             }

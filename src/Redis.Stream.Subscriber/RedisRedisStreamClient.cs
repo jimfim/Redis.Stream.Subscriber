@@ -40,6 +40,8 @@ namespace Redis.Stream.Subscriber
             var index = lastCheckpoint;
             while (!cancellationToken.IsCancellationRequested)
             {
+                StringBuilder? streamDataBuffer = null;
+                
                 try
                 {
                     var message = CommandConstants.Subscribe(streamName, settings.BatchSize, index);
@@ -57,19 +59,13 @@ namespace Redis.Stream.Subscriber
                         continue;
                     }
 
-                    var streamDataBuffer = new StringBuilder();
+                    streamDataBuffer = new StringBuilder();
                     do
                     {
                         var buffer = new byte[settings.BufferSize];
                         await _streamClient.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                         streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
                     } while (_streamClient.DataAvailable);
-
-                    foreach (var streamEntry in StreamParser.Parse(streamDataBuffer))
-                    {
-                        yield return streamEntry;
-                        index++;
-                    }
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
@@ -81,6 +77,27 @@ namespace Redis.Stream.Subscriber
                     _logger?.LogError(ex, "Error reading from stream: {ErrorMessage}", ex.Message);
                     throw;
                 }
+
+                if (streamDataBuffer != null)
+                {
+                    await foreach (var streamEntry in ProcessStreamEntriesAsync(streamDataBuffer, cancellationToken))
+                    {
+                        yield return streamEntry;
+                        index++;
+                    }
+                }
+            }
+        }
+
+        private async IAsyncEnumerable<StreamEntry> ProcessStreamEntriesAsync(StringBuilder streamDataBuffer, CancellationToken cancellationToken)
+        {
+            foreach (var streamEntry in StreamParser.Parse(streamDataBuffer))
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    yield break;
+                }
+                yield return streamEntry;
             }
         }
 
