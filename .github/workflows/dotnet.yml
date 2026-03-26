@@ -26,3 +26,7 @@ jobs:
 
     - name: Test
       run: dotnet test Redis.Stream.Subscriber.sln --configuration Release --no-build --verbosity normal
+
+    - name: Check for vulnerabilities
+      run: |
+        dotnet list package --vulnerable || exit 1
