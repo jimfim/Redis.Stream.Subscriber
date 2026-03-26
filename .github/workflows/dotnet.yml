@@ -27,5 +27,8 @@ jobs:
     - name: Test
       run: dotnet test Redis.Stream.Subscriber.sln --configuration Release --no-build --verbosity normal
 
+    - name: Install .NET Audit tool
+      run: dotnet tool install -g dotnet-audit
+
     - name: Audit for vulnerabilities
-      run: dotnet audit --severity High,Critical --output-format markdown
+      run: dotnet-audit --severity High,Critical --output-format markdown
