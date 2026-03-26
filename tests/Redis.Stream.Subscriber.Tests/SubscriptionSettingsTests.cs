@@ -75,7 +75,7 @@ namespace Redis.Stream.Subscriber.Tests
         public void BufferSize_Setter_ThrowsOnInvalidValue(int value)
         {
             var settings = new SubscriptionSettings();
-            
+
             FluentActions.Invoking(() => settings.BufferSize = value)
                 .Should().Throw<ArgumentException>()
                 .WithMessage("*BufferSize*");
@@ -87,7 +87,7 @@ namespace Redis.Stream.Subscriber.Tests
         public void BatchSize_Setter_ThrowsOnInvalidValue(int value)
         {
             var settings = new SubscriptionSettings();
-            
+
             FluentActions.Invoking(() => settings.BatchSize = value)
                 .Should().Throw<ArgumentException>()
                 .WithMessage("*BatchSize*");
@@ -98,7 +98,7 @@ namespace Redis.Stream.Subscriber.Tests
         {
             // Arrange - use reflection to set invalid value bypassing setter validation
             var settings = new SubscriptionSettings();
-            var fieldInfo = typeof(SubscriptionSettings).GetField("_bufferSize", 
+            var fieldInfo = typeof(SubscriptionSettings).GetField("_bufferSize",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             fieldInfo?.SetValue(settings, -1);
 
@@ -113,7 +113,7 @@ namespace Redis.Stream.Subscriber.Tests
         {
             // Arrange - use reflection to set invalid value bypassing setter validation
             var settings = new SubscriptionSettings();
-            var fieldInfo = typeof(SubscriptionSettings).GetField("_batchSize", 
+            var fieldInfo = typeof(SubscriptionSettings).GetField("_batchSize",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             fieldInfo?.SetValue(settings, -1);
 

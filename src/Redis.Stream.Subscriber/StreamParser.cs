@@ -44,7 +44,7 @@ namespace Redis.Stream.Subscriber
             for (int i = 0; i < entryCount; i++)
             {
                 var baseIndex = i * DataEntrySize;
-                
+
                 // Validate we have enough elements in this entry
                 if (baseIndex + 6 >= entriesArray.Length)
                 {

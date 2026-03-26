@@ -36,24 +36,23 @@ namespace Redis.Stream.Subscriber
             }
 
             settings.Validate();
-            
+
             var index = lastCheckpoint;
             while (!cancellationToken.IsCancellationRequested)
             {
                 StringBuilder? streamDataBuffer = null;
-                
+
                 try
                 {
                     var message = CommandConstants.Subscribe(streamName, settings.BatchSize, index);
                     var bytes = Encoding.ASCII.GetBytes(message);
-                    
+
                     _logger?.LogDebug("Sending XREAD command");
 
                     if (_streamClient.CanWrite)
                     {
                         await _streamClient.WriteAsync(bytes, 0, bytes.Length, cancellationToken);
-                    }
-                    else
+                    } else
                     {
                         _logger?.LogWarning("Stream not writable, retrying...");
                         continue;
@@ -66,13 +65,11 @@ namespace Redis.Stream.Subscriber
                         await _streamClient.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                         streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
                     } while (_streamClient.DataAvailable);
-                }
-                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                } catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
                     _logger?.LogDebug("Stream reading cancelled");
                     break;
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                     _logger?.LogError(ex, "Error reading from stream: {ErrorMessage}", ex.Message);
                     throw;
