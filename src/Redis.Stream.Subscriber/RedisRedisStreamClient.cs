@@ -62,7 +62,7 @@ namespace Redis.Stream.Subscriber
                     do
                     {
                         var buffer = new byte[settings.BufferSize];
-                        await _streamClient.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                        await _streamClient.ReadAsync(buffer, 0, settings.BufferSize, cancellationToken);
                         streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
                     } while (_streamClient.DataAvailable);
                 } catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -86,7 +86,7 @@ namespace Redis.Stream.Subscriber
             }
         }
 
-        private async IAsyncEnumerable<StreamEntry> ProcessStreamEntriesAsync(StringBuilder streamDataBuffer, CancellationToken cancellationToken)
+        private async IAsyncEnumerable<StreamEntry> ProcessStreamEntriesAsync(StringBuilder streamDataBuffer, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             foreach (var streamEntry in StreamParser.Parse(streamDataBuffer))
             {

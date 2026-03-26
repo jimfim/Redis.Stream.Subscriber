@@ -5,7 +5,7 @@ namespace Redis.Stream.Subscriber
 {
     public class RedisConnection : IRedisConnection
     {
-        private ITcpClient _client;
+        private ITcpClient? _client;
 
         public IRedisStreamClient Connect(RedisStreamSettings settings)
         {

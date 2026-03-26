@@ -22,7 +22,7 @@ jobs:
       run: dotnet restore Redis.Stream.Subscriber.sln
 
     - name: Build
-      run: dotnet build Redis.Stream.Subscriber.sln --configuration Release --no-restore
+      run: dotnet build Redis.Stream.Subscriber.sln --configuration Release --no-restore /p:TreatWarningsAsErrors=true /p:WarningLevel=3
 
     - name: Test
       run: dotnet test Redis.Stream.Subscriber.sln --configuration Release --no-build --verbosity normal
