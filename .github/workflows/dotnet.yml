@@ -28,9 +28,7 @@ jobs:
       run: dotnet test Redis.Stream.Subscriber.sln --configuration Release --no-build --verbosity normal
 
     - name: Restore packages with vulnerability check
-      run: |
-        dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
-        dotnet restore Redis.Stream.Subscriber.sln
+      run: dotnet restore Redis.Stream.Subscriber.sln
 
     - name: Check for vulnerabilities using NuGet audit
       run: |
