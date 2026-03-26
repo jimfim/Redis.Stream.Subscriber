@@ -75,13 +75,15 @@ namespace Redis.Stream.Subscriber.Tests
         }
 
         [Fact]
-        public void Host_Property_ThrowsWhenInvalid()
+        public void Validate_ThrowsWhenHostIsInvalid()
         {
             // Arrange
             var settings = new RedisStreamSettings();
 
-            // Act & Assert - invalid host should throw when accessed
-            Assert.Throws<ArgumentException>(() => _ = settings.Host);
+            // Act & Assert - invalid host should throw when validated
+            FluentActions.Invoking(() => settings.Validate())
+                .Should().Throw<ArgumentException>()
+                .WithMessage("*Host*");
         }
     }
 }

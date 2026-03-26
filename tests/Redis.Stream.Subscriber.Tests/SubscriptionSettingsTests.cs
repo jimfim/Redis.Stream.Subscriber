@@ -69,26 +69,58 @@ namespace Redis.Stream.Subscriber.Tests
             Assert.Equal(batchSize, settings.BatchSize);
         }
 
-        [Fact]
-        public void Validate_WithInvalidBufferSize_ThrowsArgumentException()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void BufferSize_Setter_ThrowsOnInvalidValue(int value)
         {
-            // Arrange
             var settings = new SubscriptionSettings();
-            settings.BufferSize = -1;
+            
+            FluentActions.Invoking(() => settings.BufferSize = value)
+                .Should().Throw<ArgumentException>()
+                .WithMessage("*BufferSize*");
+        }
 
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => settings.Validate());
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void BatchSize_Setter_ThrowsOnInvalidValue(int value)
+        {
+            var settings = new SubscriptionSettings();
+            
+            FluentActions.Invoking(() => settings.BatchSize = value)
+                .Should().Throw<ArgumentException>()
+                .WithMessage("*BatchSize*");
         }
 
         [Fact]
-        public void Validate_WithInvalidBatchSize_ThrowsArgumentException()
+        public void Validate_ThrowsOnInvalidBufferSize()
         {
-            // Arrange
+            // Arrange - use reflection to set invalid value bypassing setter validation
             var settings = new SubscriptionSettings();
-            settings.BatchSize = 0;
+            var fieldInfo = typeof(SubscriptionSettings).GetField("_bufferSize", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            fieldInfo?.SetValue(settings, -1);
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => settings.Validate());
+            FluentActions.Invoking(() => settings.Validate())
+                .Should().Throw<ArgumentException>()
+                .WithMessage("*BufferSize*");
+        }
+
+        [Fact]
+        public void Validate_ThrowsOnInvalidBatchSize()
+        {
+            // Arrange - use reflection to set invalid value bypassing setter validation
+            var settings = new SubscriptionSettings();
+            var fieldInfo = typeof(SubscriptionSettings).GetField("_batchSize", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            fieldInfo?.SetValue(settings, -1);
+
+            // Act & Assert
+            FluentActions.Invoking(() => settings.Validate())
+                .Should().Throw<ArgumentException>()
+                .WithMessage("*BatchSize*");
         }
     }
 }
