@@ -38,3 +38,25 @@ jobs:
           echo "Vulnerabilities found!"
           exit 1
         fi
+
+    - name: Calculate version with GitVersion
+      uses: gittools/actions/gitversion/setup@v0
+      with:
+        versionSpec: '5.x'
+
+    - name: Run GitVersion
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0
+      with:
+        useInstalledVersion: true
+
+    - name: Create GitHub Release
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.gitversion.outputs.semver }}
+        name: Release ${{ steps.gitversion.outputs.semver }}
+        body: ${{ steps.gitversion.outputs.commitMessage }}
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
