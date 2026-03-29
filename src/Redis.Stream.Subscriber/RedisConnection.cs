@@ -23,7 +23,7 @@ namespace Redis.Stream.Subscriber
 
         public void Close()
         {
-            _client.Close();
+            _client?.Close();
         }
     }
 }

@@ -62,8 +62,11 @@ namespace Redis.Stream.Subscriber
                     do
                     {
                         var buffer = new byte[settings.BufferSize];
-                        await _streamClient.ReadAsync(buffer, 0, settings.BufferSize, cancellationToken);
-                        streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+                        var bytesRead = await _streamClient.ReadAsync(buffer, 0, settings.BufferSize, cancellationToken);
+                        if (bytesRead > 0)
+                        {
+                            streamDataBuffer.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
+                        }
                     } while (_streamClient.DataAvailable);
                 } catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
