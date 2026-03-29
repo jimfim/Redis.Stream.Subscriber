@@ -56,7 +56,7 @@ jobs:
       if: github.ref == 'refs/heads/main'
 
     - name: Publish NuGet package to GitHub Packages
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/jimfim/index.json
+      run: dotnet nuget push bin/Release/Redis.Stream.Subscriber.*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/jimfim/index.json
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     - name: Create GitHub Release
