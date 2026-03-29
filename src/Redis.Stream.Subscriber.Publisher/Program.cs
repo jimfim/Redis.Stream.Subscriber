@@ -22,12 +22,10 @@ namespace Redis.Stream.Subscriber.Publisher
 
             while (true)
             {
-                using (var transaction = db.CreateTransaction())
-                {
-                    await transaction.StreamAddAsync(streamName, "foo_name", $"bar_{count}", $"{count}-0");
-                    await transaction.StringIncrementAsync(checkpointKey);
-                    await transaction.ExecuteAsync();
-                }
+                var transaction = db.CreateTransaction();
+                await transaction.StreamAddAsync(streamName, "foo_name", $"bar_{count}", $"{count}-0");
+                await transaction.StringIncrementAsync(checkpointKey);
+                await transaction.ExecuteAsync();
                 Console.WriteLine($"message sent : {count}");
                 count++;
                 Thread.Sleep(2000);
