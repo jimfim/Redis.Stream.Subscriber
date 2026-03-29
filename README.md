@@ -139,3 +139,18 @@ dotnet run --project src/Redis.Stream.Subscriber.Listener/Redis.Stream.Subscribe
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[contributors-url]: https://github.com/jimfim/Redis.Stream.Subscriber/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[forks-url]: https://github.com/jimfim/Redis.Stream.Subscriber/network/members
+[stars-shield]: https://img.shields.io/github/stars/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[stars-url]: https://github.com/jimfim/Redis.Stream.Subscriber/stargazers
+[issues-shield]: https://img.shields.io/github/issues/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[issues-url]: https://github.com/jimfim/Redis.Stream.Subscriber/issues
+[license-shield]: https://img.shields.io/github/license/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
+[license-url]: https://github.com/jimfim/Redis.Stream.Subscriber/blob/master/LICENSE.txt
+[build-shield]: https://img.shields.io/github/actions/workflow/status/jimfim/Redis.Stream.Subscriber/dotnet.yml?branch=main&style=for-the-badge
+[build-status]: https://github.com/jimfim/Redis.Stream.Subscriber/actions
