@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,17 +13,20 @@ namespace Redis.Stream.Subscriber.Client
 
             var connect = connection.Connect(new RedisStreamSettings
             {
-                host = "localhost",
+                Host = "localhost",
                 Port = 6379
             });
 
-            uint startingIndex = 0;
-            var entries = connect.ReadStreamAsync("mystream", startingIndex);
-            await foreach (var entry in entries)
+            Console.WriteLine("\nPress Enter to read backwards from newest entries...");
+            Console.ReadLine();
+
+            var backwardEntries = connect.ReadStreamBackwardsAsync("mystream", "-", 10);
+            await foreach (var entry in backwardEntries)
             {
                 await ProcessEntry(entry);
             }
-            
+
+            Console.WriteLine("\nPress Enter to exit...");
             Console.ReadLine();
             connect.Close();
         }

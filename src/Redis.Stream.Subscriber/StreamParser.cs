@@ -4,33 +4,68 @@ using System.Text;
 
 namespace Redis.Stream.Subscriber
 {
+    /// <summary>
+    /// Parses Redis stream response data into StreamEntry objects.
+    /// </summary>
     public static class StreamParser
     {
-        public static IEnumerable<StreamEntry> Parse(StringBuilder stringBuilder)
+        private const int HeaderSize = 6;
+        private const int DataEntrySize = 8;
+
+        /// <summary>
+        /// Parses a Redis stream response string into individual entries.
+        /// Returns empty enumerable if parsing fails or data is invalid.
+        /// </summary>
+        public static IEnumerable<StreamEntry> Parse(string responseData)
         {
-            int headerSize = 6;
-            int dataSize = 8;
-            var parsedStreamData = stringBuilder.ToString().Split(CommandConstants.StreamEnd);
-            var x = parsedStreamData.Length - headerSize;
-            if (x < 0)
+            if (string.IsNullOrWhiteSpace(responseData))
             {
-                yield return new StreamEntry();
+                yield break;
             }
-            else
+
+            var parsedData = responseData.Split(CommandConstants.StreamEnd, StringSplitOptions.RemoveEmptyEntries);
+
+            if (parsedData.Length < HeaderSize)
             {
-                var myArrSegMid = new ArraySegment<string>( parsedStreamData,headerSize,parsedStreamData.Length - headerSize).ToArray();
-                var dataSegments = myArrSegMid.Length / 8;
-                for (int i = 0; i < dataSegments; i++)
+                yield break;
+            }
+
+            // Use ArraySegment for better performance without copying array
+            var entriesArray = new string[parsedData.Length - HeaderSize];
+            Array.Copy(parsedData, HeaderSize, entriesArray, 0, entriesArray.Length);
+
+            if (entriesArray.Length == 0)
+            {
+                yield break;
+            }
+
+            int entryCount = entriesArray.Length / DataEntrySize;
+
+            for (int i = 0; i < entryCount; i++)
+            {
+                var baseIndex = i * DataEntrySize;
+
+                // Validate we have enough elements in this entry
+                if (baseIndex + 6 >= entriesArray.Length)
                 {
-                    var entry = new StreamEntry
-                    {
-                        Id = myArrSegMid[(i*dataSize)+1],
-                        FieldName = myArrSegMid[(i*dataSize)+4],
-                        Data = myArrSegMid[(i*dataSize)+6]
-                    };
-                    yield return entry;
+                    yield break;
                 }
+
+                yield return new StreamEntry
+                {
+                    Id = entriesArray[baseIndex + 1] ?? "-",
+                    FieldName = entriesArray[baseIndex + 4],
+                    Data = entriesArray[baseIndex + 6]
+                };
             }
+        }
+
+        /// <summary>
+        /// Overload that accepts StringBuilder for backward compatibility.
+        /// </summary>
+        public static IEnumerable<StreamEntry> Parse(StringBuilder? stringBuilder)
+        {
+            return Parse(stringBuilder?.ToString() ?? string.Empty);
         }
     }
 }

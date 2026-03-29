@@ -8,9 +8,11 @@ namespace Redis.Stream.Subscriber
     public interface IRedisStreamClient
     {
         IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, uint lastCheckpoint, SubscriptionSettings settings, CancellationToken cancellationToken = default);
-        
+
         IAsyncEnumerable<StreamEntry> ReadStreamAsync(string streamName, uint lastCheckpoint, CancellationToken cancellationToken = default);
-        
+
+        IAsyncEnumerable<StreamEntry> ReadStreamBackwardsAsync(string streamName, string fromId, int batchSize, CancellationToken cancellationToken = default);
+
         void Close();
     }
 }
