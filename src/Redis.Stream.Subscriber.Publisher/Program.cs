@@ -22,14 +22,12 @@ namespace Redis.Stream.Subscriber.Publisher
 
             while (true)
             {
-                var transaction = db.CreateTransaction();
-
-#pragma warning disable 4014
-                transaction.StreamAddAsync(streamName, "foo_name", $"bar_{count}", $"{count}-0");
-                transaction.StringIncrementAsync(checkpointKey);
-#pragma warning restore 4014
-
-                await transaction.ExecuteAsync();
+                using (var transaction = db.CreateTransaction())
+                {
+                    await transaction.StreamAddAsync(streamName, "foo_name", $"bar_{count}", $"{count}-0");
+                    await transaction.StringIncrementAsync(checkpointKey);
+                    await transaction.ExecuteAsync();
+                }
                 Console.WriteLine($"message sent : {count}");
                 count++;
                 Thread.Sleep(2000);

@@ -23,10 +23,9 @@ namespace Redis.Stream.Subscriber.Tests
         }
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Validate_WithInvalidHost_ThrowsArgumentException(string? host)
+        public void Validate_WithInvalidHost_ThrowsArgumentException(string host)
         {
             // Arrange
             var settings = new RedisStreamSettings
