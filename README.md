@@ -159,5 +159,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 [issues-url]: https://github.com/jimfim/Redis.Stream.Subscriber/issues
 [license-shield]: https://img.shields.io/github/license/jimfim/Redis.Stream.Subscriber.svg?style=for-the-badge
 [license-url]: https://github.com/jimfim/Redis.Stream.Subscriber/blob/master/LICENSE.txt
-[build-shield]: https://img.shields.io/github/workflow/status/jimfim/Redis.Stream.Subscriber/.NET.svg?style=for-the-badge
-[build-status]: https://img.shields.io/github/workflow/status/jimfim/Redis.Stream.Subscriber/.NET
+[build-shield]: https://img.shields.io/github/actions/workflow/status/jimfim/Redis.Stream.Subscriber/dotnet.yml?branch=main&style=for-the-badge
+[build-status]: https://github.com/jimfim/Redis.Stream.Subscriber/actions
