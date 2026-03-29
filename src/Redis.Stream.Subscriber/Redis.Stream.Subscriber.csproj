@@ -6,10 +6,22 @@
     <WarningsAsErrors>true</WarningsAsErrors>
     <RepositoryUrl>https://github.com/jimfim/Redis.Stream.Subscriber</RepositoryUrl>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Version>$(GitVersion SemVer)</Version>
+    <PackageVersion>$(GitVersion SemVer)</PackageVersion>
+    <Authors>jimfim</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/jimfim/Redis.Stream.Subscriber</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>redis;stream;subscriber;dotnet</PackageTags>
+    <Description>Redis Stream Subscriber library</Description>
     
     <!-- Enable nullable reference types -->
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <!-- Add Roslyn Analyzers -->
   <ItemGroup>

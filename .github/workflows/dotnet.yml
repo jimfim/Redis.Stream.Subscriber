@@ -51,6 +51,14 @@ jobs:
       id: gitversion
       uses: gittools/actions/gitversion/execute@v0
 
+    - name: Build and create NuGet package
+      run: dotnet pack Redis.Stream.Subscriber.sln --configuration Release --no-build /p:Version=${{ steps.gitversion.outputs.semver }}
+      if: github.ref == 'refs/heads/main'
+
+    - name: Publish NuGet package to GitHub Packages
+      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/jimfim/index.json
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
     - name: Create GitHub Release
       if: github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
