@@ -14,7 +14,7 @@ namespace Redis.Stream.Subscriber
         /// <summary>
         /// The Redis server hostname or IP address. Required.
         /// </summary>
-        public string Host { get; set; } = null!;
+        public string? Host { get; set; }
 
         /// <summary>
         /// The Redis server port. Defaults to 6379.
