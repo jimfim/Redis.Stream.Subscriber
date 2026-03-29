@@ -22,11 +22,24 @@ This project is concerned only with reading streams. It provides no functionalit
 * [Usage](#usage)
 * [Building](#building)
 * [License](#license)
-* [Related Projects](#related-projects)
+
 
 ## Features
 - [X] Read stream forward (XREAD)
 - [X] Read stream backwards (XREVRANGE)
+- [X] Configurable subscription settings
+- [X] Input validation
+
+### Subscription Settings
+- `BufferSize` - Socket buffer size for reading data (default: 1024 bytes)
+- `BatchSize` - Number of stream entries to read per batch (default: 1)
+- `Validate()` - Validates settings before use
+
+### Redis Stream Settings
+- `Host` - Redis server hostname or IP address (required)
+- `Port` - Redis server port (default: 6379)
+- `Timeout` - Connection timeout in milliseconds (default: 100)
+- `Validate()` - Validates host, port, and timeout values
 
 ## Installation
 Install via nuget
@@ -43,24 +56,45 @@ The thread is blocked listening on the socket until there is data consume, at wh
 
 ## Usage
 
-Initialize connection with redis
+Initialize connection with redis using RedisStreamSettings
 ```c#
 var connection = new RedisConnection();
 var connect = connection.Connect(new RedisStreamSettings
 {
-    host = "localhost",
-    Port = 6379
+    Host = "localhost",
+    Port = 6379,
+    Timeout = 100
 });
 ```
 
-Start receiving stream entries
+Configure subscription settings and start receiving stream entries
 ```c#
+var settings = new SubscriptionSettings
+{
+    BufferSize = 1024,
+    BatchSize = 1
+};
+
 uint startingIndex = 0;
-var entries = connect.ReadStreamAsync("mystream", startingIndex);
+var entries = connect.ReadStreamAsync("mystream", startingIndex, settings);
 await foreach (var entry in entries)
 {
     await Console.Out.WriteLineAsync(entry.Data);
 }
+```
+
+Read stream backwards
+```c#
+var entries = connect.ReadStreamBackwardsAsync("mystream", "$", 10);
+await foreach (var entry in entries)
+{
+    await Console.Out.WriteLineAsync(entry.Data);
+}
+```
+
+Close the connection
+```c#
+connect.Close();
 ```
 
 ## Building
@@ -106,10 +140,12 @@ dotnet run --project src/Redis.Stream.Subscriber.Listener/Redis.Stream.Subscribe
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
-
-## Related Projects
-* [EventNet](https://github.com/jimfim/EventNet) (**mine**)- Library to manage an Aggregate lifecycle using Redis as an event store.
-* [Awesome EventSourcing](https://github.com/leandrocp/awesome-cqrs-event-sourcing) - More EventSourcing goodness
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![Build Status][build-shield]][build-status]
+[![MIT License][license-shield]][license-url]
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
